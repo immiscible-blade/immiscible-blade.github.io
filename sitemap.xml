@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TODO: replace YOUR-USERNAME with the real domain after publishing -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://YOUR-USERNAME.github.io/</loc><lastmod>2026-06-09</lastmod></url>
+  <url><loc>https://YOUR-USERNAME.github.io/research.html</loc><lastmod>2026-06-09</lastmod></url>
+  <url><loc>https://YOUR-USERNAME.github.io/publications.html</loc><lastmod>2026-06-09</lastmod></url>
+  <url><loc>https://YOUR-USERNAME.github.io/teaching.html</loc><lastmod>2026-06-09</lastmod></url>
+  <url><loc>https://YOUR-USERNAME.github.io/notes.html</loc><lastmod>2026-06-09</lastmod></url>
+  <url><loc>https://YOUR-USERNAME.github.io/misc.html</loc><lastmod>2026-06-09</lastmod></url>
+</urlset>

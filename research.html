@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Research — Om Dehlan</title>
+<meta name="description" content="Om Dehlan's research agenda: computational argumentation, human label variation and perspectivist NLP, LLM evaluation and semantic diversity, and multi-agent planning.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FDFDFB" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14181D" media="(prefers-color-scheme: dark)">
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="research">
+<a class="skip" href="#main">skip to content</a>
+<div class="page">
+
+  <header class="site-header">
+    <a class="brand" href="index.html">Om Dehlan</a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="index.html">home</a>
+      <a href="research.html" data-nav="research" aria-current="page">research</a>
+      <a href="publications.html" data-nav="publications">publications</a>
+      <a href="teaching.html" data-nav="teaching">teaching</a>
+      <a href="notes.html" data-nav="notes">notes</a>
+      <a href="misc.html" data-nav="misc">misc</a>
+      <a href="files/cv.pdf">cv</a>
+    </nav>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode">&#9680;</button>
+  </header>
+
+  <main id="main">
+
+    <h1 class="page-title">Research</h1>
+    <p class="page-intro">Disagreement as signal, not noise.</p>
+
+    <section class="first" id="agenda">
+      <p>
+        The standard NLP pipeline launders disagreement: collect labels, take a majority vote, train on the
+        winner, report accuracy. For many tasks that's fine. For the tasks I care about &mdash; <em>is this
+        argument fallacious? is this answer different from that one? is this persuasive, and to whom?</em> &mdash;
+        the vote erases exactly the part worth studying. My research treats human label variation as something
+        to model, predict, and evaluate against.
+      </p>
+      <p>
+        I work on this at three levels: <em>data</em> &mdash; annotation protocols and decision-tree guidelines
+        that expose where trained annotators diverge, rather than papering over it; <em>modeling</em> &mdash;
+        training-free methods for getting calibrated soft label distributions out of LLMs; and
+        <em>evaluation</em> &mdash; metrics that ask whether model outputs are diverse and faithful in ways
+        embedding similarity can't see. Most of my experiments run on UNC's GPU cluster, serving open models
+        at scale with vLLM.
+      </p>
+    </section>
+
+    <!-- The four threads mirror the distribution strip on the home
+         page (same order, same colors). To add a fifth thread: add a
+         --seg5 token in styles.css, a strip segment in index.html,
+         and a .thread block here with its own id. -->
+    <section id="threads">
+      <h2 class="eyebrow">Current threads</h2>
+
+      <div class="thread" id="thread-argumentation">
+        <span class="dot dot-1" aria-hidden="true"></span>
+        <div>
+          <h3>Computational argumentation</h3>
+          <p>Detecting fallacies and assessing argument quality in real discourse, where the boundary between
+          a rhetorical move and a fallacy is itself contested. I build annotation protocols for slippery
+          categories like whataboutism and false dilemma &mdash; including multi-question decision trees that
+          turn one hard judgment into several easier ones &mdash; and study inter-annotator agreement to find
+          out where, and why, trained annotators diverge.</p>
+          <p class="rep">status: active &middot; annotation studies + LLM evaluation in progress</p>
+        </div>
+      </div>
+
+      <div class="thread" id="thread-labels">
+        <span class="dot dot-2" aria-hidden="true"></span>
+        <div>
+          <h3>Human label variation</h3>
+          <p>When annotators disagree, the distribution of labels carries information a majority vote throws
+          away. I work on training-free methods for predicting soft labels in fallacy classification &mdash;
+          logit extraction, verbalized distributions, self-consistency sampling &mdash; in the spirit of
+          perspectivist NLP: evaluating models against the full distribution of human judgments rather than
+          a single gold answer.</p>
+          <p class="rep">status: active &middot; paper in preparation</p>
+        </div>
+      </div>
+
+      <div class="thread" id="thread-evaluation">
+        <span class="dot dot-3" aria-hidden="true"></span>
+        <div>
+          <h3>LLM evaluation &amp; semantic diversity</h3>
+          <p>Embedding similarity is a blunt instrument for asking whether two model responses actually differ.
+          I'm developing structured axes of comparison &mdash; conceptual anchor, reasoning structure,
+          perspective, grounding, scope, register, implicature &mdash; to measure the diversity of <em>what</em>
+          models say across samples, not just how they phrase it, and to study homogenization across model
+          families.</p>
+          <p class="rep">status: active</p>
+        </div>
+      </div>
+
+      <div class="thread" id="thread-agents">
+        <span class="dot dot-4" aria-hidden="true"></span>
+        <div>
+          <h3>Agents &amp; planning</h3>
+          <p>How language models and reasoning models can divide cognitive labor.
+          <span class="sc">LRPlan</span> pairs them as collaborating agents for planning under implicit and
+          explicit constraints, trading accuracy against inference cost &mdash; state of the art on
+          TravelPlanner and TimeArena-Static.</p>
+          <p class="rep">representative: <a href="https://aclanthology.org/2025.findings-emnlp.440/" target="_blank" rel="noopener">LRPlan, Findings of EMNLP 2025</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="directions">
+      <h2 class="eyebrow">Where this is heading</h2>
+      <p>
+        Three questions I want a PhD's worth of time for. <em>First:</em> if models can predict label
+        distributions, can they be trained and evaluated perspectivally end-to-end &mdash; keeping
+        whose-judgment-it-is as a first-class variable instead of collapsing it? <em>Second:</em> can
+        disagreement itself become a training signal &mdash; telling a model not just what the answer is, but
+        how contested it is? <em>Third:</em> can argument-quality models give feedback that actually helps
+        people write and reason better, rather than just scoring them?
+      </p>
+      <!-- TODO: revise as the agenda sharpens — this section is what
+           potential advisors read most closely. -->
+    </section>
+
+    <section id="projects">
+      <h2 class="eyebrow">Projects &amp; infrastructure</h2>
+      <div class="projects-grid">
+
+        <article class="project">
+          <h3>Fallacy annotation tooling</h3>
+          <p class="meta">react &middot; annotation interfaces &middot; 2025&ndash;present</p>
+          <p>Interactive interfaces for whataboutism and false-dilemma labeling, with seeded shuffling for
+          assignment balance and guided multi-question decision trees that decompose each judgment. Built to
+          make disagreement visible and analyzable rather than something to adjudicate away.</p>
+          <!-- TODO: <p class="meta"><a href="#">[code]</a> <a href="#">[demo]</a></p> when public -->
+        </article>
+
+        <article class="project">
+          <h3>Inter-annotator agreement pipelines</h3>
+          <p class="meta">python &middot; analysis &middot; 2025&ndash;present</p>
+          <p>Analysis pipelines for multi-annotator fallacy data: pairwise Cohen's &kappa;, per-question
+          disagreement breakdowns, and evaluation of LLM prompting strategies (definitions, decision trees,
+          single- and multi-turn) against both majority labels and full label distributions.</p>
+        </article>
+
+        <article class="project">
+          <h3>Evaluation infrastructure</h3>
+          <p class="meta">vllm &middot; slurm &middot; 2025&ndash;present</p>
+          <p>Multi-model serving setups on a SLURM-managed GPU cluster &mdash; concurrent vLLM endpoints for
+          generation and embedding models &mdash; supporting panel-style evaluation of fine-tuned checkpoints
+          against open baselines.</p>
+        </article>
+
+        <!-- TEMPLATE — copy this block for a new project:
+        <article class="project">
+          <h3>Project name</h3>
+          <p class="meta">stack &middot; category &middot; year</p>
+          <p>One or two sentences on what it is and why it exists.</p>
+          <p class="meta"><a href="#">[code]</a> <a href="#">[demo]</a></p>
+        </article>
+        -->
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; <span data-year>2026</span> Om Dehlan</span>
+    <button class="palette-hint-footer" type="button" data-palette-open>press <kbd>/</kbd> to jump</button>
+    <span>Chapel Hill, NC &middot; updated <span data-updated>June 2026</span></span>
+  </footer>
+
+</div>
+<script src="assets/js/data.js" defer></script>
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>

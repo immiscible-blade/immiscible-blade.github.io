@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# TODO: replace with the real domain after publishing
+Sitemap: https://YOUR-USERNAME.github.io/sitemap.xml

@@ -1,0 +1,12 @@
+{
+  "name": "Om Dehlan",
+  "short_name": "Om Dehlan",
+  "description": "NLP researcher at UNC Chapel Hill",
+  "start_url": ".",
+  "display": "minimal-ui",
+  "background_color": "#FDFDFB",
+  "theme_color": "#13294B",
+  "icons": [
+    { "src": "assets/img/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

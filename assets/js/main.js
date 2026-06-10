@@ -1,0 +1,490 @@
+/* ═══════════════════════════════════════════════════════════════
+   Om Dehlan — site behavior.
+   Content lives in data.js; this file just renders it.
+   Everything degrades gracefully without JavaScript.
+   ═══════════════════════════════════════════════════════════════ */
+
+(function () {
+  "use strict";
+
+  /* ── helpers ─────────────────────────────────────────────── */
+  var $  = function (s, el) { return (el || document).querySelector(s); };
+  var $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+  var esc = function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
+  var store = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { /* unavailable */ } }
+  };
+  var media = function (q) {
+    return (window.matchMedia && matchMedia(q).matches) || false;
+  };
+
+  // Root prefix ("" at site root, "../" inside notes/), derived
+  // from the nav's own home link so it is always correct.
+  var ROOT = (function () {
+    var home = $('.site-nav a[href$="index.html"]');
+    return home ? home.getAttribute("href").replace(/index\.html$/, "") : "";
+  })();
+
+  /* ── toast ───────────────────────────────────────────────── */
+  var toastTimer = null;
+  function toast(msg) {
+    var t = $(".toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.className = "toast";
+      t.setAttribute("role", "status");
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove("show"); }, 1800);
+  }
+
+  function copyText(text, label) {
+    var done = function () { toast(label || "copied"); };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+        return;
+      }
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand && document.execCommand("copy");
+      document.body.removeChild(ta);
+      done();
+    } catch (e) { /* clipboard unavailable */ }
+  }
+
+  /* ── theme ───────────────────────────────────────────────── */
+  function effectiveTheme() {
+    return document.documentElement.dataset.theme ||
+           (media("(prefers-color-scheme: dark)") ? "dark" : "light");
+  }
+  function toggleTheme() {
+    var next = effectiveTheme() === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    store.set("theme", next);
+    syncThemeButton();
+  }
+  function syncThemeButton() {
+    var btn = $(".theme-toggle");
+    if (!btn) return;
+    var dark = effectiveTheme() === "dark";
+    btn.textContent = dark ? "\u25D1" : "\u25D0";
+    btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+  }
+  function initTheme() {
+    var btn = $(".theme-toggle");
+    if (btn) btn.addEventListener("click", toggleTheme);
+    syncThemeButton();
+  }
+
+  /* ── section visibility engine ───────────────────────────────
+     Resolves SECTIONS (true | false | "auto") against the data
+     in data.js, then prunes nav links and hides sections. Runs
+     identically on every page, so the nav is always consistent. */
+  function countFor(key) {
+    switch (key) {
+      case "notes":        return (typeof NOTES !== "undefined" ? NOTES.length : 0);
+      case "publications": return (typeof PUBLICATIONS !== "undefined" ? PUBLICATIONS.length : 0);
+      case "courses":
+      case "mentoring":
+      case "talks":
+      case "service":
+        return (typeof TEACHING !== "undefined" && TEACHING[key]) ? TEACHING[key].length : 0;
+      default: return 1; // static pages (research, misc) count as content
+    }
+  }
+  function resolveSections() {
+    var defaults = {
+      research: true, publications: true, teaching: "auto",
+      notes: "auto", misc: true,
+      courses: "auto", mentoring: "auto", talks: "auto", service: "auto"
+    };
+    var cfg = {};
+    for (var k in defaults) {
+      cfg[k] = (typeof SECTIONS !== "undefined" && k in SECTIONS) ? SECTIONS[k] : defaults[k];
+    }
+    var r = {};
+    Object.keys(cfg).forEach(function (key) {
+      if (key === "teaching") return; // resolved after subsections
+      var v = cfg[key];
+      r[key] = (v === true) ? true : (v === false) ? false : countFor(key) > 0;
+    });
+    r.teaching = (cfg.teaching === true) ? true
+               : (cfg.teaching === false) ? false
+               : (r.courses || r.mentoring || r.talks || r.service);
+    return r;
+  }
+  function applyVisibility(r) {
+    $$("[data-nav]").forEach(function (a) {
+      var k = a.dataset.nav;
+      if (k in r && !r[k]) a.parentNode && a.parentNode.removeChild(a);
+    });
+    $$("[data-section]").forEach(function (s) {
+      var k = s.dataset.section;
+      if (k in r && !r[k]) s.hidden = true;
+    });
+    var page = document.body.dataset.page;
+    if (page && page in r && !r[page]) {
+      var m = $("#main");
+      if (m) {
+        m.innerHTML = '<section class="first"><div class="empty">This page is tucked away for now \u2014 back soon.</div>' +
+                      '<p class="section-foot"><a href="' + ROOT + 'index.html">\u2190 home</a></p></section>';
+      }
+    }
+  }
+
+  /* ── now line ────────────────────────────────────────────── */
+  function renderNow() {
+    var el = $("[data-now]");
+    if (!el) return;
+    if (typeof NOW !== "undefined" && NOW) {
+      el.innerHTML = '<span class="now-label">now</span> ' + NOW;
+      el.hidden = false;
+    }
+  }
+
+  /* ── news ────────────────────────────────────────────────── */
+  function newsRow(n) {
+    return '<li><time datetime="' + esc(n.date) + '">' + esc(n.label) +
+           '</time><span class="item">' + n.html + "</span></li>";
+  }
+  function renderNews() {
+    var el = $("[data-news]");
+    if (!el || typeof NEWS === "undefined") return;
+    var limit = parseInt(el.dataset.news, 10) || NEWS.length;
+    var recent = NEWS.slice(0, limit);
+    var older  = NEWS.slice(limit);
+    el.innerHTML = recent.map(newsRow).join("");
+    if (older.length) {
+      var btn = document.createElement("button");
+      btn.className = "news-more";
+      btn.type = "button";
+      btn.textContent = "+ " + older.length + " older";
+      btn.addEventListener("click", function () {
+        el.insertAdjacentHTML("beforeend", older.map(newsRow).join(""));
+        btn.parentNode.removeChild(btn);
+      });
+      el.after ? el.after(btn) : el.parentNode.appendChild(btn);
+    }
+  }
+
+  /* ── publications ────────────────────────────────────────── */
+  function authorsHTML(p) {
+    return p.authors.map(function (a) {
+      var name = esc(a.name) + (a.equal ? "*" : "");
+      return a.me ? '<span class="me">' + name + "</span>" : name;
+    }).join(", ");
+  }
+  function linksHTML(p) {
+    var order = ["paper", "pdf", "code", "data", "slides", "poster", "video"];
+    var out = order.filter(function (k) { return p.links && p.links[k]; })
+      .map(function (k) {
+        return '<a href="' + esc(p.links[k]) + '" target="_blank" rel="noopener">[' + k + "]</a>";
+      });
+    if (p.bibtex) out.push('<a href="#" role="button" data-bib="' + esc(p.id) + '" aria-expanded="false">[bib]</a>');
+    return out.join(" ");
+  }
+  function pubHTML(p) {
+    var title = (p.links && p.links.paper)
+      ? '<a href="' + esc(p.links.paper) + '" target="_blank" rel="noopener">' + esc(p.title) + "</a>"
+      : esc(p.title);
+    return '<article class="pub" id="' + esc(p.id) + '">' +
+      '<span class="venue">' + esc(p.venue) + "</span>" +
+      "<h3>" + title + "</h3>" +
+      '<p class="authors">' + authorsHTML(p) + "</p>" +
+      (p.tldr ? '<p class="tldr"><strong>tl;dr</strong> \u2014 ' + esc(p.tldr) + "</p>" : "") +
+      '<p class="pub-links">' + linksHTML(p) + "</p>" +
+      (p.bibtex
+        ? '<div class="bib" id="bib-' + esc(p.id) + '" hidden>' +
+          '<button class="bib-copy" type="button">copy</button>' +
+          "<pre>" + esc(p.bibtex) + "</pre></div>"
+        : "") +
+      "</article>";
+  }
+  function renderPubLists() {
+    if (typeof PUBLICATIONS === "undefined") return;
+    $$("[data-pubs]").forEach(function (el) {
+      var mode = el.dataset.pubs;
+      if (mode === "selected") {
+        el.innerHTML = PUBLICATIONS.filter(function (p) { return p.selected; }).map(pubHTML).join("");
+      } else if (mode === "full") {
+        renderFull(el, PUBLICATIONS.slice());
+      }
+    });
+  }
+  function renderFull(el, pubs) {
+    var bar = $("[data-pub-filters]");
+    var types = pubs.map(function (p) { return p.type; })
+      .filter(function (t, i, a) { return a.indexOf(t) === i; });
+    var active = "all";
+
+    var draw = function () {
+      var list = active === "all" ? pubs : pubs.filter(function (p) { return p.type === active; });
+      if (!list.length) {
+        el.innerHTML = '<div class="empty">Nothing in this category yet.</div>';
+        return;
+      }
+      var years = list.map(function (p) { return p.year; })
+        .filter(function (y, i, a) { return a.indexOf(y) === i; })
+        .sort(function (a, b) { return b - a; });
+      el.innerHTML = years.map(function (y) {
+        return '<h2 class="pub-year">' + y + "</h2>" +
+          list.filter(function (p) { return p.year === y; }).map(pubHTML).join("");
+      }).join("");
+    };
+
+    // Filter chips build themselves from the types present in the
+    // data — they appear automatically once a second type exists.
+    if (bar && types.length > 1) {
+      var mk = function (val, label) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "chip";
+        b.dataset.val = val;
+        b.textContent = label;
+        return b;
+      };
+      bar.appendChild(mk("all", "all (" + pubs.length + ")"));
+      types.forEach(function (t) {
+        bar.appendChild(mk(t, t + " (" + pubs.filter(function (p) { return p.type === t; }).length + ")"));
+      });
+      bar.firstChild.classList.add("active");
+      bar.addEventListener("click", function (e) {
+        var b = e.target.closest(".chip");
+        if (!b) return;
+        active = b.dataset.val;
+        $$(".chip", bar).forEach(function (c) { c.classList.toggle("active", c === b); });
+        draw();
+      });
+    } else if (bar) {
+      bar.parentNode.removeChild(bar);
+    }
+    draw();
+  }
+
+  // BibTeX toggle + copy (delegated; works for future entries)
+  document.addEventListener("click", function (e) {
+    var toggle = e.target.closest("[data-bib]");
+    if (toggle) {
+      e.preventDefault();
+      var box = $("#bib-" + toggle.dataset.bib);
+      if (box) {
+        box.hidden = !box.hidden;
+        toggle.setAttribute("aria-expanded", String(!box.hidden));
+      }
+      return;
+    }
+    var copy = e.target.closest(".bib-copy");
+    if (copy) {
+      var pre = $("pre", copy.parentElement);
+      if (pre) copyText(pre.textContent, "BibTeX copied");
+    }
+  });
+
+  /* ── teaching entries ────────────────────────────────────── */
+  function entryHTML(e) {
+    return '<div class="entry">' +
+      (e.title ? "<h3>" + esc(e.title) + "</h3>" : "") +
+      (e.meta ? '<p class="meta">' + e.meta + "</p>" : "") +
+      (e.desc ? "<p>" + esc(e.desc) + "</p>" : "") +
+      "</div>";
+  }
+  function renderTeaching() {
+    if (typeof TEACHING === "undefined") return;
+    $$("[data-entries]").forEach(function (el) {
+      var key = el.dataset.entries;
+      var list = TEACHING[key];
+      if (list && list.length) el.innerHTML = list.map(entryHTML).join("");
+      // empty → the authored placeholder copy in the HTML stays
+    });
+  }
+
+  /* ── notes ───────────────────────────────────────────────── */
+  function renderNotes() {
+    var el = $("[data-notes]");
+    if (!el || typeof NOTES === "undefined") return;
+    if (!NOTES.length) {
+      el.innerHTML = '<div class="empty">No notes yet. First drafts in progress: ' +
+        "on annotating fallacies, and on what \u201Cdiverse outputs\u201D should actually mean.</div>";
+      return;
+    }
+    el.innerHTML = NOTES.map(function (n) {
+      return '<article class="note-item"><time datetime="' + esc(n.date) + '">' + esc(n.date) + "</time>" +
+        '<h3><a href="' + ROOT + esc(n.href) + '">' + esc(n.title) + "</a></h3>" +
+        (n.blurb ? "<p>" + esc(n.blurb) + "</p>" : "") +
+        "</article>";
+    }).join("");
+  }
+
+  /* ── scroll reveal ───────────────────────────────────────── */
+  function initReveal() {
+    if (media("(prefers-reduced-motion: reduce)")) return;
+    if (!("IntersectionObserver" in window)) return;
+    var targets = $$("main section, .pub, .thread, .project, .note-item, .entry");
+    targets.forEach(function (t) { t.classList.add("reveal"); });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add("in");
+          io.unobserve(en.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
+    targets.forEach(function (t) { io.observe(t); });
+  }
+
+  /* ── command palette (press / or ⌘K) ─────────────────────── */
+  var pal = { el: null, input: null, list: null, items: [], filtered: [], active: 0, lastFocus: null };
+
+  function collectItems() {
+    var items = [];
+    $$(".site-nav a[href]").forEach(function (a) {
+      var label = a.textContent.replace(/\s+/g, " ").trim();
+      if (!label) return;
+      items.push({ label: label, hint: "page", href: a.getAttribute("href") });
+    });
+    if (typeof PUBLICATIONS !== "undefined") {
+      PUBLICATIONS.forEach(function (p) {
+        items.push({ label: p.title, hint: p.venue, href: ROOT + "publications.html#" + p.id });
+      });
+    }
+    items.push({ label: "Toggle dark mode", hint: "action", run: toggleTheme });
+    var mail = $('a[href^="mailto:"]');
+    if (mail) {
+      var addr = mail.getAttribute("href").replace(/^mailto:/, "");
+      items.push({ label: "Copy email address", hint: "action", run: function () { copyText(addr, "email copied"); } });
+    }
+    return items;
+  }
+
+  function paletteRender(q) {
+    q = (q || "").toLowerCase();
+    pal.filtered = pal.items.filter(function (i) {
+      return i.label.toLowerCase().indexOf(q) !== -1 ||
+             (i.hint && i.hint.toLowerCase().indexOf(q) !== -1);
+    });
+    if (pal.active >= pal.filtered.length) pal.active = 0;
+    if (!pal.filtered.length) {
+      pal.list.innerHTML = '<li class="palette-none">no matches \u2014 p(result) = 0.00</li>';
+      pal.input.removeAttribute("aria-activedescendant");
+      return;
+    }
+    pal.list.innerHTML = pal.filtered.map(function (i, idx) {
+      return '<li id="pal-opt-' + idx + '" role="option" data-i="' + idx + '"' +
+        (idx === pal.active ? ' class="active" aria-selected="true"' : ' aria-selected="false"') +
+        ">" + esc(i.label) + "<span>" + esc(i.hint || "") + "</span></li>";
+    }).join("");
+    pal.input.setAttribute("aria-activedescendant", "pal-opt-" + pal.active);
+    var activeEl = $("#pal-opt-" + pal.active);
+    if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: "nearest" });
+  }
+
+  function paletteRun(idx) {
+    var item = pal.filtered[idx];
+    if (!item) return;
+    paletteClose();
+    if (item.run) item.run();
+    else if (item.href) window.location.href = item.href;
+  }
+
+  function paletteBuild() {
+    pal.el = document.createElement("div");
+    pal.el.className = "palette";
+    pal.el.innerHTML =
+      '<div class="palette-backdrop"></div>' +
+      '<div class="palette-box" role="dialog" aria-modal="true" aria-label="Quick navigation">' +
+        '<input type="text" placeholder="Jump to a page, paper, or action\u2026" ' +
+               'role="combobox" aria-expanded="true" aria-label="Search pages and papers" autocomplete="off" spellcheck="false">' +
+        '<ul role="listbox" aria-label="Results"></ul>' +
+        '<p class="palette-hint"><kbd>\u2191\u2193</kbd> navigate \u00B7 <kbd>\u21B5</kbd> open \u00B7 <kbd>esc</kbd> close</p>' +
+      "</div>";
+    document.body.appendChild(pal.el);
+    pal.input = $("input", pal.el);
+    pal.list  = $("ul", pal.el);
+
+    $(".palette-backdrop", pal.el).addEventListener("click", paletteClose);
+    pal.input.addEventListener("input", function () { pal.active = 0; paletteRender(pal.input.value); });
+    pal.input.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown") { e.preventDefault(); if (pal.filtered.length) { pal.active = (pal.active + 1) % pal.filtered.length; paletteRender(pal.input.value); } }
+      else if (e.key === "ArrowUp") { e.preventDefault(); if (pal.filtered.length) { pal.active = (pal.active - 1 + pal.filtered.length) % pal.filtered.length; paletteRender(pal.input.value); } }
+      else if (e.key === "Enter") { e.preventDefault(); paletteRun(pal.active); }
+      else if (e.key === "Escape") { e.preventDefault(); paletteClose(); }
+    });
+    pal.list.addEventListener("click", function (e) {
+      var li = e.target.closest("li[data-i]");
+      if (li) paletteRun(parseInt(li.dataset.i, 10));
+    });
+  }
+
+  function paletteOpen() {
+    if (!pal.el) paletteBuild();
+    pal.items = collectItems();
+    pal.lastFocus = document.activeElement;
+    pal.active = 0;
+    pal.input.value = "";
+    paletteRender("");
+    pal.el.classList.add("open");
+    document.documentElement.classList.add("palette-lock");
+    pal.input.focus();
+  }
+  function paletteClose() {
+    if (!pal.el) return;
+    pal.el.classList.remove("open");
+    document.documentElement.classList.remove("palette-lock");
+    if (pal.lastFocus && pal.lastFocus.focus) pal.lastFocus.focus();
+  }
+  function paletteIsOpen() {
+    return !!(pal.el && pal.el.classList.contains("open"));
+  }
+
+  function initPalette() {
+    document.addEventListener("keydown", function (e) {
+      var typing = e.target && e.target.matches &&
+                   e.target.matches("input, textarea, select, [contenteditable]");
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) {
+        e.preventDefault();
+        paletteIsOpen() ? paletteClose() : paletteOpen();
+      } else if (e.key === "/" && !typing && !paletteIsOpen()) {
+        e.preventDefault();
+        paletteOpen();
+      } else if (e.key === "Escape" && paletteIsOpen()) {
+        paletteClose();
+      }
+    });
+    $$("[data-palette-open]").forEach(function (b) {
+      b.addEventListener("click", paletteOpen);
+    });
+  }
+
+  /* ── footer metadata ─────────────────────────────────────── */
+  function metaFill() {
+    var y = $("[data-year]");
+    if (y) y.textContent = new Date().getFullYear();
+    var u = $("[data-updated]");
+    if (u && typeof LAST_UPDATED !== "undefined") u.textContent = LAST_UPDATED;
+  }
+
+  /* ── init (order matters) ────────────────────────────────── */
+  initTheme();
+  applyVisibility(resolveSections());
+  renderNow();
+  renderNews();
+  renderPubLists();
+  renderTeaching();
+  renderNotes();
+  metaFill();
+  initReveal();
+  initPalette();
+})();
