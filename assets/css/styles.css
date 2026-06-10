@@ -288,6 +288,39 @@ kbd{
   justify-content: center;
 }
 
+/* hero photo rotator (activates with 2+ PHOTOS entries) */
+.photo-rotor{
+  display: block;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.photo-rotor img{ transition: opacity .25s ease; }
+.photo-dots{
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 8px;
+}
+.photo-dots span{
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hairline);
+  transition: background-color .2s ease;
+}
+.photo-dots span.active{ background: var(--carolina); }
+.visually-hidden{
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 /* Signature: research as a soft label distribution.
    Each segment is a link to its thread on the research page. */
 .dist{ margin: 4px 0 6px; }

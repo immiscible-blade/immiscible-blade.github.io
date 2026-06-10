@@ -39,6 +39,20 @@ const SECTIONS = {
    site is alive. TODO: keep current.                          */
 const NOW = "drafting the soft-label fallacy paper &nbsp;·&nbsp; bass :D";
 
+/* ── PHOTOS ───────────────────────────────────────────────────
+   Hero photo(s). One entry → static headshot (current behavior).
+   Two or more → on each visit the order is shuffled, the photo
+   gently auto-advances, and visitors can click/tap it to step
+   through one by one. Drop files in assets/img/ and list them.
+
+   TEMPLATE:
+   { src: "assets/img/me-bass.jpg", alt: "Om playing bass" },
+─────────────────────────────────────────────────────────────── */
+const PHOTOS = [
+  { src: "assets/img/headshot.jpg", alt: "Portrait of Om Dehlan" }
+  // { src: "assets/img/me-2.jpg", alt: "…" },
+];
+
 /* ── NEWS ─────────────────────────────────────────────────────
    Newest first. `html` may contain simple tags and links.
    Home shows the latest 5 with a "+ older" expander.

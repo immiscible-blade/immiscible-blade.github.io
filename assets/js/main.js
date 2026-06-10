@@ -469,6 +469,86 @@
   }
 
   /* ── footer metadata ─────────────────────────────────────── */
+  /* ── hero photo rotator ──────────────────────────────────
+     Activates automatically once PHOTOS has 2+ entries:
+     order shuffled per visit, gentle auto-advance, click/tap
+     steps through one by one (and takes over from the timer). */
+  function initPhotos() {
+    var box = $("[data-photos]");
+    if (!box || typeof PHOTOS === "undefined" || !PHOTOS || PHOTOS.length < 2) return;
+
+    var order = PHOTOS.slice();
+    for (var i = order.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+    }
+
+    var idx = 0;
+    var busy = false;
+    var stopped = media("(prefers-reduced-motion: reduce)");
+    var timer = null;
+
+    box.innerHTML =
+      '<button type="button" class="photo-rotor" aria-label="Show next photo">' +
+        '<img src="' + esc(order[0].src) + '" alt="' + esc(order[0].alt || "") + '">' +
+      "</button>" +
+      '<div class="photo-dots" aria-hidden="true">' +
+        order.map(function (_, k) { return "<span" + (k === 0 ? ' class="active"' : "") + "></span>"; }).join("") +
+      "</div>" +
+      '<span class="visually-hidden" aria-live="polite"></span>';
+
+    var img  = $(".photo-rotor img", box);
+    var dots = $$(".photo-dots span", box);
+    var live = $(".visually-hidden", box);
+
+    function paint() {
+      dots.forEach(function (d, k) { d.classList.toggle("active", k === idx); });
+      live.textContent = "Photo " + (idx + 1) + " of " + order.length;
+    }
+
+    function advance() {
+      if (busy) return;
+      busy = true;
+      var nextIdx = (idx + 1) % order.length;
+      var pre = new Image();
+      pre.onload = function () {
+        img.style.opacity = "0";
+        setTimeout(function () {
+          idx = nextIdx;
+          img.src = order[idx].src;
+          img.alt = order[idx].alt || "";
+          img.style.opacity = "1";
+          paint();
+          busy = false;
+        }, 200);
+      };
+      pre.onerror = function () { busy = false; };
+      pre.src = order[nextIdx].src;
+    }
+
+    function play() {
+      if (stopped || timer) return;
+      timer = setInterval(advance, 6000);
+    }
+    function pause() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    $(".photo-rotor", box).addEventListener("click", function () {
+      stopped = true;   // manual control wins; auto-advance retires
+      pause();
+      advance();
+    });
+    box.addEventListener("mouseenter", pause);
+    box.addEventListener("mouseleave", play);
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { pause(); } else { play(); }
+    });
+
+    paint();
+    play();
+  }
+
   function metaFill() {
     var y = $("[data-year]");
     if (y) y.textContent = new Date().getFullYear();
@@ -480,6 +560,7 @@
   initTheme();
   applyVisibility(resolveSections());
   renderNow();
+  initPhotos();
   renderNews();
   renderPubLists();
   renderTeaching();
