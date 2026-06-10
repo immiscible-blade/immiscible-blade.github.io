@@ -37,7 +37,7 @@ const SECTIONS = {
    One mono line under the hero links. Simple HTML allowed.
    Set to "" to hide. Update it occasionally — it signals the
    site is alive. TODO: keep current.                          */
-const NOW = "drafting the soft-label fallacy paper &nbsp;·&nbsp; bass :D...";
+const NOW = "drafting the soft-label fallacy paper &nbsp;·&nbsp; bass :D....";
 
 /* ── NEWS ─────────────────────────────────────────────────────
    Newest first. `html` may contain simple tags and links.
