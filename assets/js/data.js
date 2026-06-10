@@ -105,10 +105,8 @@ const PUBLICATIONS = [
       pdf:   "https://aclanthology.org/2025.findings-emnlp.440.pdf"
       // code: "https://github.com/…",   // TODO: add if/when public
     },
-    // TODO: replace with the official entry from the ACL Anthology
-    // "Cite" button (it includes page numbers).
     bibtex: `@inproceedings{karthikeyan-etal-2025-lrplan,
-    title = "{LRPLAN}: A Multi-Agent Collaboration of Large Language and Reasoning Models for Planning with Implicit {\&} Explicit Constraints",
+    title = "{LRPLAN}: A Multi-Agent Collaboration of Large Language and Reasoning Models for Planning with Implicit {\\&} Explicit Constraints",
     author = "Karthikeyan, T  and
       Dehlan, Om  and
       Mausam  and
