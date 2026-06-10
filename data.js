@@ -48,8 +48,8 @@ const NOW = "summer @ Universal Instruments, Binghamton NY &nbsp;·&nbsp; drafti
      html: "Submitted <em>Paper title</em> to ACL 2027." },
 ──────────────────────────────────────────────────────────────── */
 const NEWS = [
-  { date: "2026-06", label: "Jun 2026",
-    html: "Spending the summer as an engineering intern at Universal Instruments in Binghamton, NY." },
+  // { date: "2026-06", label: "Jun 2026",
+  //   html: "Spending the summer as an engineering intern at Universal Instruments in Binghamton, NY." },
   { date: "2025-11", label: "Nov 2025",
     html: "<span class=\"sc\">LRPlan</span> appears in Findings of EMNLP&nbsp;2025." },
   { date: "2025-08", label: "Aug 2025",
