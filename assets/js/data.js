@@ -108,13 +108,25 @@ const PUBLICATIONS = [
     // TODO: replace with the official entry from the ACL Anthology
     // "Cite" button (it includes page numbers).
     bibtex: `@inproceedings{karthikeyan-etal-2025-lrplan,
-  title     = {{LRP}lan: A Multi-Agent Collaboration of Large Language and Reasoning Models for Planning with Implicit {\\&} Explicit Constraints},
-  author    = {Karthikeyan, T and Dehlan, Om and Mausam and Gupta, Manish},
-  booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2025},
-  year      = {2025},
-  address   = {Suzhou, China},
-  publisher = {Association for Computational Linguistics},
-  url       = {https://aclanthology.org/2025.findings-emnlp.440/}
+    title = "{LRPLAN}: A Multi-Agent Collaboration of Large Language and Reasoning Models for Planning with Implicit {\&} Explicit Constraints",
+    author = "Karthikeyan, T  and
+      Dehlan, Om  and
+      Mausam  and
+      Gupta, Manish",
+    editor = "Christodoulopoulos, Christos  and
+      Chakraborty, Tanmoy  and
+      Rose, Carolyn  and
+      Peng, Violet",
+    booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2025",
+    month = nov,
+    year = "2025",
+    address = "Suzhou, China",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.findings-emnlp.440/",
+    doi = "10.18653/v1/2025.findings-emnlp.440",
+    pages = "8280--8310",
+    ISBN = "979-8-89176-335-7",
+    abstract = "Our goal is to build language model based multi-agent systems for complex planning problems involving multiple explicit and implicit constraints, some of which may be commonsense. Our initial investigations reveal that large language models (LLMs) are often unable to maintain consistency across the planning process, whereas large reasoning models (LRMs) struggle with handling implicit commonsense constraints. In response, we introduce LRPlan, a novel domain-independent, language-based multi-agent architecture where LLM and LRM-based agents collaborate at training time to abstract important patterns, heuristics and insights about the domain. At test time, they collaborate in implementing these learned patterns and insights for a new planning instance. We perform experiments on two datasets, TravelPlanner and TimeArena-Static, and use two LLM-LRM combinations from GPT and DeepSeek families. We find that LRPlan outperforms various multi-agent and single-agent baselines obtaining notably higher accuracy as well as cost efficiency. We make the code publiclyavailable."
 }`
   }
 ];
