@@ -549,6 +549,205 @@
     play();
   }
 
+  /* ── annotation field (generative backdrop) ─────────────────
+     Each particle is an "annotator" softly assigned to one of the
+     four thread attractors via softmax over distance — p(k) ∝
+     exp(−d_k/T) — periodically resampled, so allegiances drift.
+     Links are drawn only between nearby particles that DISAGREE.
+     Theme-aware, cursor-reactive, fades out on scroll, pauses
+     when hidden, and renders a single static frame under
+     prefers-reduced-motion. Config: BACKDROP in data.js. */
+  function initField() {
+    if (typeof BACKDROP !== "undefined" && BACKDROP && BACKDROP.enabled === false) return;
+    var cv = document.createElement("canvas");
+    if (!cv.getContext) return;
+    var ctx = cv.getContext("2d");
+    if (!ctx) return;
+    cv.className = "field";
+    cv.setAttribute("aria-hidden", "true");
+    document.body.insertBefore(cv, document.body.firstChild);
+
+    var reduced = media("(prefers-reduced-motion: reduce)");
+    var density = (typeof BACKDROP !== "undefined" && BACKDROP && BACKDROP.density) || 1;
+    var W, H, parts = [], attractors = [], pal = { segs: [] };
+    var mouse = { x: -1e4, y: -1e4 };
+    var running = false, rafId = null;
+
+    function readPalette() {
+      var cs = getComputedStyle(document.documentElement);
+      pal.paper = cs.getPropertyValue("--paper").trim() || "#FDFDFB";
+      pal.hair = cs.getPropertyValue("--hairline").trim() || "#E4E7E9";
+      pal.segs = [1, 2, 3, 4].map(function (n) {
+        return cs.getPropertyValue("--seg" + n).trim() || "#4B9CD3";
+      });
+    }
+    function hardClear() {
+      ctx.fillStyle = pal.paper;
+      ctx.fillRect(0, 0, W, H);
+    }
+    function placeAttractors() {
+      attractors = [
+        { x: W * 0.20, y: H * 0.28 },
+        { x: W * 0.46, y: H * 0.55 },
+        { x: W * 0.70, y: H * 0.26 },
+        { x: W * 0.86, y: H * 0.60 }
+      ];
+    }
+    function softmaxPick(px, py) {
+      var T = Math.max(W, H) * 0.18;
+      var ws = attractors.map(function (a) {
+        var dx = a.x - px, dy = a.y - py;
+        return Math.exp(-Math.sqrt(dx * dx + dy * dy) / T);
+      });
+      var sum = 0, k;
+      for (k = 0; k < ws.length; k++) sum += ws[k];
+      var r = Math.random() * sum;
+      for (k = 0; k < ws.length; k++) { r -= ws[k]; if (r <= 0) return k; }
+      return ws.length - 1;
+    }
+    function spawn() {
+      var n = Math.round((W < 640 ? 45 : 80) * density);
+      parts = [];
+      for (var i = 0; i < n; i++) {
+        var x = Math.random() * W, y = Math.random() * H;
+        parts.push({
+          x: x, y: y,
+          vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+          k: softmaxPick(x, y),
+          r: 1.2 + Math.random() * 1.6,
+          pulse: 0,
+          resample: 240 + Math.random() * 600
+        });
+      }
+    }
+    function resize() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = window.innerWidth; H = window.innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      placeAttractors();
+      spawn();
+      hardClear();
+      if (reduced) staticFrame();
+    }
+
+    function step() {
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i], a = attractors[p.k];
+        p.vx += (a.x - p.x) * 0.00012 + (Math.random() - 0.5) * 0.05;
+        p.vy += (a.y - p.y) * 0.00012 + (Math.random() - 0.5) * 0.05;
+        var dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
+        if (d2 < 16900 && d2 > 1) {           // cursor perturbs within 130px
+          var f = 0.6 / Math.sqrt(d2);
+          p.vx += dx * f * 0.12; p.vy += dy * f * 0.12;
+          if (Math.random() < 0.02) { p.k = softmaxPick(p.x, p.y); p.pulse = 1; }
+        }
+        p.vx *= 0.965; p.vy *= 0.965;
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < -20) p.x = W + 20; if (p.x > W + 20) p.x = -20;
+        if (p.y < -20) p.y = H + 20; if (p.y > H + 20) p.y = -20;
+        if (--p.resample <= 0) {
+          var nk = softmaxPick(p.x, p.y);
+          if (nk !== p.k) p.pulse = 1;
+          p.k = nk;
+          p.resample = 240 + Math.random() * 600;
+        }
+        if (p.pulse > 0) p.pulse -= 0.04;
+      }
+    }
+    function drawLinks() {
+      ctx.strokeStyle = pal.hair;
+      for (var i = 0; i < parts.length; i++) {
+        for (var j = i + 1; j < parts.length; j++) {
+          var p = parts[i], q = parts[j];
+          if (p.k === q.k) continue;          // only disagreement connects
+          var dx = p.x - q.x, dy = p.y - q.y, d2 = dx * dx + dy * dy;
+          if (d2 > 4900) continue;            // within 70px
+          ctx.globalAlpha = 0.35 * (1 - d2 / 4900);
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+    function drawParts() {
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        ctx.fillStyle = pal.segs[p.k];
+        ctx.globalAlpha = 0.55;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.2832); ctx.fill();
+        if (p.pulse > 0) {                    // ring marks a re-label
+          ctx.globalAlpha = 0.3 * p.pulse;
+          ctx.strokeStyle = pal.segs[p.k];
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r + (1 - p.pulse) * 9, 0, 6.2832); ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+    function scrollFade() {
+      return Math.max(0, Math.min(1, 1 - (window.scrollY || 0) / (H * 1.15)));
+    }
+    function frame() {
+      rafId = null;
+      var fade = scrollFade();
+      cv.style.opacity = fade;
+      if (fade <= 0 || document.hidden) { running = false; return; }
+      ctx.globalAlpha = 0.08;                 // trail decay
+      ctx.fillStyle = pal.paper;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = 1;
+      step();
+      drawLinks();
+      drawParts();
+      rafId = requestAnimationFrame(frame);
+    }
+    function ensureRunning() {
+      if (running || reduced) return;
+      if (scrollFade() <= 0 || document.hidden) return;
+      running = true;
+      rafId = requestAnimationFrame(frame);
+    }
+    function staticFrame() {                  // reduced motion: settle, draw once
+      for (var t = 0; t < 260; t++) step();
+      hardClear();
+      drawLinks();
+      drawParts();
+      cv.style.opacity = scrollFade();
+    }
+
+    readPalette();
+    resize();
+    if (!window.requestAnimationFrame || reduced) {
+      if (reduced) staticFrame();
+      window.addEventListener("resize", debounce(resize, 200));
+      return;
+    }
+    ensureRunning();
+
+    window.addEventListener("scroll", function () {
+      if (reduced) { cv.style.opacity = scrollFade(); return; }
+      ensureRunning();
+    }, { passive: true });
+    window.addEventListener("mousemove", function (e) { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+    window.addEventListener("touchmove", function (e) {
+      if (e.touches && e.touches[0]) { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }
+    }, { passive: true });
+    window.addEventListener("resize", debounce(resize, 200));
+    document.addEventListener("visibilitychange", ensureRunning);
+
+    // theme changes: re-read palette, wipe trails
+    var sync = function () { readPalette(); hardClear(); if (reduced) staticFrame(); };
+    if (window.MutationObserver) {
+      new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    }
+    if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").addEventListener) {
+      matchMedia("(prefers-color-scheme: dark)").addEventListener("change", sync);
+    }
+  }
+  function debounce(fn, ms) {
+    var t = null;
+    return function () { clearTimeout(t); t = setTimeout(fn, ms); };
+  }
+
   function metaFill() {
     var y = $("[data-year]");
     if (y) y.textContent = new Date().getFullYear();
@@ -558,6 +757,7 @@
 
   /* ── init (order matters) ────────────────────────────────── */
   initTheme();
+  initField();
   applyVisibility(resolveSections());
   renderNow();
   initPhotos();

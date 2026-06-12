@@ -60,6 +60,8 @@ comments directly above it:
   in `TEACHING`. The subsection un-hides itself.
 - **Note** → copy `notes/_template.html` to `notes/your-slug.html`, write,
   add an entry to `NOTES`.
+- **Backdrop** → `BACKDROP` in `data.js`: `enabled` kills the generative
+  annotation field; `density` scales its particle count.
 - **Photos** → drop files in `assets/img/` and list them in `PHOTOS`.
   One entry = static headshot; two or more = a shuffled rotator that
   auto-advances and steps photo-by-photo on click.
@@ -72,7 +74,7 @@ Cross-page View Transitions (Chrome/Edge; graceful elsewhere) · command
 palette on `/` or `Ctrl/⌘K` (pages, papers, theme, copy-email) · dark mode
 following the OS with a ◐ override · sticky blur header · fluid `clamp()`
 type scale from phone to desktop · scroll-reveal animations · interactive
-hero strip (each segment links to its research thread) · hero photo rotator · BibTeX toggle +
+hero strip (each segment links to its research thread) · hero photo rotator · generative annotation-field backdrop · BibTeX toggle +
 copy with toast · JSON-LD Person markup · PWA manifest · sitemap/robots ·
 `prefers-reduced-motion` respected throughout · print stylesheet.
 

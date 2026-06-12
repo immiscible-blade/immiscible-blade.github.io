@@ -33,6 +33,15 @@ const SECTIONS = {
   service:      "auto"
 };
 
+/* ── BACKDROP ─────────────────────────────────────────────────
+   The generative "annotation field" behind the page: each drifting
+   point is an annotator, softly assigned to one of the four research
+   threads by a literal softmax over distance — switching allegiance
+   now and then, with faint links drawn where neighbors disagree.
+   Cursor movement perturbs (re-labels) the region around it.
+   enabled: false turns it off · density scales the particle count. */
+const BACKDROP = { enabled: true, density: 1.0 };
+
 /* ── NOW ──────────────────────────────────────────────────────
    One mono line under the hero links. Simple HTML allowed.
    Set to "" to hide. Update it occasionally — it signals the

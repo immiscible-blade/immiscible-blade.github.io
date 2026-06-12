@@ -79,12 +79,12 @@
 /* ── Base ────────────────────────────────────────────────── */
 
 *{ box-sizing: border-box; }
-html{ scroll-behavior: smooth; background: var(--paper); }
+html{ scroll-behavior: smooth; background: var(--paper); transition: background-color .2s ease; }
 html.palette-lock{ overflow: hidden; }
 
 body{
   margin: 0;
-  background: var(--paper);
+  background: transparent; /* html carries the paper so the field and grain can sit behind content */
   color: var(--ink);
   font-family: var(--serif);
   font-size: var(--fs-0);
@@ -107,6 +107,14 @@ body::before{
 :root[data-theme="dark"] body::before{ opacity: .055; }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]) body::before{ opacity: .055; }
+}
+
+.field{
+  position: fixed;
+  inset: 0;
+  z-index: -2;             /* behind content and the paper grain */
+  pointer-events: none;
+  transition: opacity .25s linear;
 }
 
 .page{
