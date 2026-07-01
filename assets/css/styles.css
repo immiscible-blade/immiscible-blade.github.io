@@ -24,6 +24,12 @@
   --sel-bg: #A9CEE8;
   --sel-fg: #13294B;
 
+  /* aurora backdrop fields */
+  --aur1: rgba(75, 156, 211, 0.16);   /* carolina */
+  --aur2: rgba(169, 206, 232, 0.26);  /* sky */
+  --aur3: rgba(184, 146, 62, 0.10);   /* ochre warmth */
+  --aur4: rgba(19, 41, 75, 0.08);     /* navy depth */
+
   /* fluid type scale — phone → desktop */
   --fs--1: clamp(0.79rem, 0.76rem + 0.15vw, 0.86rem);
   --fs-0:  clamp(1.00rem, 0.95rem + 0.30vw, 1.13rem);
@@ -55,6 +61,10 @@
   --seg4: #C9A45A;
   --sel-bg: #35506B;
   --sel-fg: #E7EAEC;
+  --aur1: rgba(91, 167, 220, 0.14);
+  --aur2: rgba(63, 111, 168, 0.20);
+  --aur3: rgba(201, 164, 90, 0.10);
+  --aur4: rgba(169, 206, 232, 0.07);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -109,12 +119,45 @@ body::before{
   :root:not([data-theme="light"]) body::before{ opacity: .055; }
 }
 
-.field{
+/* ambient aurora backdrop (config: BACKDROP in data.js) */
+.aurora{
   position: fixed;
   inset: 0;
-  z-index: -2;             /* behind content and the paper grain */
+  z-index: -2;               /* behind content and the paper grain */
+  overflow: hidden;
   pointer-events: none;
-  transition: opacity .25s linear;
+}
+.aurora span{
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+}
+.aurora .a1{
+  width: 60vmax; height: 60vmax; left: -15vmax; top: -22vmax;
+  background: radial-gradient(closest-side, var(--aur1), transparent 72%);
+  animation: aur-a 47s ease-in-out infinite alternate;
+}
+.aurora .a2{
+  width: 52vmax; height: 52vmax; right: -14vmax; top: -6vmax;
+  background: radial-gradient(closest-side, var(--aur2), transparent 72%);
+  animation: aur-b 59s ease-in-out infinite alternate;
+}
+.aurora .a3{
+  width: 46vmax; height: 46vmax; left: 8vmax; bottom: -20vmax;
+  background: radial-gradient(closest-side, var(--aur3), transparent 72%);
+  animation: aur-c 71s ease-in-out infinite alternate;
+}
+.aurora .a4{
+  width: 40vmax; height: 40vmax; right: 2vmax; bottom: -14vmax;
+  background: radial-gradient(closest-side, var(--aur4), transparent 72%);
+  animation: aur-d 83s ease-in-out infinite alternate;
+}
+@keyframes aur-a{ to{ transform: translate3d(9vmax, 6vmax, 0) scale(1.12); } }
+@keyframes aur-b{ to{ transform: translate3d(-7vmax, 9vmax, 0) scale(0.92); } }
+@keyframes aur-c{ to{ transform: translate3d(10vmax, -7vmax, 0) scale(1.10); } }
+@keyframes aur-d{ to{ transform: translate3d(-9vmax, -5vmax, 0) scale(1.08); } }
+@media (prefers-reduced-motion: reduce){
+  .aurora span{ animation: none; }
 }
 
 .page{

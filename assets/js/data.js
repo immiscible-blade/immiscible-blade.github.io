@@ -34,12 +34,9 @@ const SECTIONS = {
 };
 
 /* ── BACKDROP ─────────────────────────────────────────────────
-   The generative "annotation field" behind the page: each drifting
-   point is an annotator, softly assigned to one of the four research
-   threads by a literal softmax over distance — switching allegiance
-   now and then, with faint links drawn where neighbors disagree.
-   Cursor movement perturbs (re-labels) the region around it.
-   enabled: false turns it off · density scales the particle count. */
+   Ambient aurora behind the page: four soft fields of the site
+   palette drifting on slow offset loops. Pure CSS animation.
+   enabled: false turns it off · density: 0–1 overall intensity. */
 const BACKDROP = { enabled: true, density: 1.0 };
 
 /* ── NOW ──────────────────────────────────────────────────────

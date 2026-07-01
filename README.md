@@ -60,8 +60,8 @@ comments directly above it:
   in `TEACHING`. The subsection un-hides itself.
 - **Note** → copy `notes/_template.html` to `notes/your-slug.html`, write,
   add an entry to `NOTES`.
-- **Backdrop** → `BACKDROP` in `data.js`: `enabled` kills the generative
-  annotation field; `density` scales its particle count.
+- **Backdrop** → `BACKDROP` in `data.js`: `enabled` toggles the ambient
+  aurora; `density` (0–1) dials its intensity.
 - **Photos** → drop files in `assets/img/` and list them in `PHOTOS`.
   One entry = static headshot; two or more = a shuffled rotator that
   auto-advances and steps photo-by-photo on click.
@@ -74,17 +74,17 @@ Cross-page View Transitions (Chrome/Edge; graceful elsewhere) · command
 palette on `/` or `Ctrl/⌘K` (pages, papers, theme, copy-email) · dark mode
 following the OS with a ◐ override · sticky blur header · fluid `clamp()`
 type scale from phone to desktop · scroll-reveal animations · interactive
-hero strip (each segment links to its research thread) · hero photo rotator · generative annotation-field backdrop · BibTeX toggle +
+hero strip (each segment links to its research thread) · hero photo rotator · ambient aurora backdrop · BibTeX toggle +
 copy with toast · JSON-LD Person markup · PWA manifest · sitemap/robots ·
 `prefers-reduced-motion` respected throughout · print stylesheet.
 
 ## Tested
 
-A jsdom suite (29 assertions) covers the visibility engine, all renderers,
-config overrides, news expander, filter chips, BibTeX toggle, palette, and
-theme persistence. Tag balance, link/anchor resolution, and CSS brace
-balance are validated on every page. (Suite lives outside the repo to keep
-it dependency-free.)
+`npm install` once, then `npm test`. The jsdom suite in `tests/` covers
+the visibility engine, all renderers, config overrides, filter chips,
+BibTeX toggle, palette, photo rotator, and aurora backdrop. The site
+itself stays dependency-free — `node_modules` exists only for tests and
+is gitignored.
 
 ## Before going live (TODO checklist)
 

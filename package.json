@@ -1,0 +1,24 @@
+{
+  "name": "work",
+  "version": "1.0.0",
+  "description": "Personal academic website for Om Dehlan. Plain HTML/CSS/JS — no build step, no framework, no dependencies. Push to GitHub, and GitHub Pages serves it as-is.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests/test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/immiscible-blade/immiscible-blade.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/immiscible-blade/immiscible-blade.github.io/issues"
+  },
+  "homepage": "https://github.com/immiscible-blade/immiscible-blade.github.io#readme",
+  "private": "true",
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}
