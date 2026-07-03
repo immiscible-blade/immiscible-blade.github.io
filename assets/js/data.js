@@ -4,7 +4,7 @@
    Everything below renders automatically. Add an entry, refresh.
    ═══════════════════════════════════════════════════════════════ */
 
-const LAST_UPDATED = "June 2026";   // shown in the footer
+const LAST_UPDATED = "July 2026";   // shown in the footer
 
 /* ── SECTION TOGGLES ──────────────────────────────────────────
    Controls navigation links AND section visibility, site-wide.
