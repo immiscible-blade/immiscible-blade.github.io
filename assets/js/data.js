@@ -198,8 +198,8 @@ const TEACHING = {
 
    TEMPLATE:
    { date: "2026-09-01",
-     title: "What should “diverse outputs” actually mean?",
-     href: "notes/diverse-outputs.html",
-     blurb: "Why embedding similarity undersells the question." },
+     title: "Title of the note",
+     href: "notes/my-note.html",
+     blurb: "One-line teaser." },
 ──────────────────────────────────────────────────────────────── */
 const NOTES = [];
