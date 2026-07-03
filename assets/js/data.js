@@ -68,6 +68,8 @@ const PHOTOS = [
      html: "Submitted <em>Paper title</em> to ACL 2027." },
 ──────────────────────────────────────────────────────────────── */
 const NEWS = [
+  { date: "2026-07", label: "Jul 2026",
+    html: "Attended ACL 2026 in San Diego." },
   // { date: "2026-06", label: "Jun 2026",
   //   html: "Spending the summer as an engineering intern at Universal Instruments in Binghamton, NY." },
   { date: "2025-11", label: "Nov 2025",
@@ -77,7 +79,9 @@ const NEWS = [
   { date: "2025-07", label: "Jul 2025",
     html: "Attended ACL 2025 in Vienna." },
   { date: "2025-05", label: "May 2025",
-    html: "Graduated with a B.Tech in computer science from IIT Delhi." }
+    html: "Graduated with a B.Tech in computer science from IIT Delhi." },
+  { date: "2024-05", label: "May 2024",
+    html: "Started a research internship at POSTECH, South Korea." }
 ];
 
 /* ── PUBLICATIONS ─────────────────────────────────────────────
@@ -119,11 +123,11 @@ const PUBLICATIONS = [
       { name: "Manish Gupta" }
     ],
     venue: "Findings of EMNLP 2025",
-    tldr: "LLM and LRM agents collaborate on constrained planning, reaching state of the art on TravelPlanner and TimeArena-Static with up to 12.7-point accuracy gains over the closest baselines, at lower cost.",
+    tldr: "A domain-independent multi-agent framework where LLM and LRM agents collaborate for constrained planning, achieving SoTA on TravelPlanner and TimeArena-Static with up to 12.7 pt accuracy gains over nearest baselines while maintaining superior cost efficiency.",
     links: {
       paper: "https://aclanthology.org/2025.findings-emnlp.440/",
-      pdf:   "https://aclanthology.org/2025.findings-emnlp.440.pdf"
-      // code: "https://github.com/…",   // TODO: add if/when public
+      pdf:   "https://aclanthology.org/2025.findings-emnlp.440.pdf",
+      code:  "https://github.com/dair-iitd/LRPlan"
     },
     bibtex: `@inproceedings{karthikeyan-etal-2025-lrplan,
     title = "{LRPLAN}: A Multi-Agent Collaboration of Large Language and Reasoning Models for Planning with Implicit {\\&} Explicit Constraints",
