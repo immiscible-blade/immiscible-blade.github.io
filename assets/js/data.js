@@ -172,17 +172,18 @@ const PUBLICATIONS = [
 ──────────────────────────────────────────────────────────────── */
 const TEACHING = {
   courses:   [],
-  mentoring: [],
+  mentoring: [
+    { title: "Academic Mentor, Calculus",
+      meta:  "Board for Student Welfare · IIT Delhi" },
+    { title: "Student Mentor",
+      meta:  "Board for Student Welfare · IIT Delhi" }
+  ],
   talks:     [],
   service: [
     { title: "Diversity Representative",
-      meta:  "Office of Diversity &amp; Inclusion · IIT Delhi",
-      desc:  "Represented student concerns to the office and helped run inclusion programming across campus." },
-    { title: "Lead organizer (logistics), IIT Delhi Pride Festival",
-      meta:  "IIT Delhi",
-      desc:  "Led logistics for the institute's Pride Festival." }
-    // Peer review goes here when it starts:
-    // { title: "Peer review", meta: "ACL Rolling Review · 2027–", desc: "" },
+      meta:  "Office of Diversity &amp; Inclusion · IIT Delhi" },
+    { title: "Administrative Coordinator, Vibhinn 2024 (IIT Delhi Pride Fest)",
+      meta:  "IIT Delhi" }
   ]
 };
 
