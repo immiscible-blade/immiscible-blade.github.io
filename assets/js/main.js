@@ -316,8 +316,8 @@
     var el = $("[data-notes]");
     if (!el || typeof NOTES === "undefined") return;
     if (!NOTES.length) {
-      el.innerHTML = '<div class="empty">No notes yet. First drafts in progress: ' +
-        "on annotating fallacies, and on what \u201Cdiverse outputs\u201D should actually mean.</div>";
+      el.innerHTML = '<div class="empty">The website is finally done complete. ' +
+        "Fable 5 fiasco in the parallel.</div>";
       return;
     }
     el.innerHTML = NOTES.map(function (n) {
