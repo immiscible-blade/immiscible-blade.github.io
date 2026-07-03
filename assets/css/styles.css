@@ -409,6 +409,15 @@ kbd{
   margin: 8px 0 0;
 }
 
+.threads-line{
+  font-family: var(--mono);
+  font-size: 12.5px;
+  margin: 4px 0 0;
+}
+.threads-line a{ color: var(--muted); padding: 4px 0; }
+.threads-line a:hover{ color: var(--carolina); }
+.threads-line .sep{ color: var(--hairline); margin: 0 7px; user-select: none; }
+
 .links{
   font-family: var(--mono);
   font-size: 13px;

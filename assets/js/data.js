@@ -43,7 +43,7 @@ const BACKDROP = { enabled: true, density: 1.0 };
    One mono line under the hero links. Simple HTML allowed.
    Set to "" to hide. Update it occasionally — it signals the
    site is alive. TODO: keep current.                          */
-const NOW = "drafting the soft-label fallacy paper &nbsp;·&nbsp; bass :D";
+const NOW = "research &nbsp;·&nbsp; competitive Counter-Strike &nbsp;·&nbsp; learning bass";
 
 /* ── PHOTOS ───────────────────────────────────────────────────
    Hero photo(s). One entry → static headshot (current behavior).

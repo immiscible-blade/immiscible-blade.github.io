@@ -126,10 +126,9 @@ git push -u origin main
 ## Design notes
 
 Palette, segment colors, and the fluid type scale are CSS variables at the
-top of `styles.css` — the whole site reskins from there. The bar under the
-name is the site's signature: research interests rendered as a soft label
-distribution, segment colors keyed to the four threads on the research
-page. To add a fifth thread: a `--seg5` token, a strip segment in
-`index.html`, and a thread block in `research.html`. `.nojekyll` matters —
+top of `styles.css` — the whole site reskins from there. The hero links
+each research thread by name; thread colors live as dots on the research
+page (and in the favicon). To add a fifth thread: a `--seg5` token, a
+link in the hero's `.threads-line`, and a thread block in `research.html`. `.nojekyll` matters —
 without it, GitHub Pages runs Jekyll and silently drops `_`-prefixed files
 like `notes/_template.html`.
