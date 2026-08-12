@@ -76,8 +76,6 @@ const NEWS = [
     html: "<span class=\"sc\">LRPlan</span> appears in Findings of EMNLP&nbsp;2025." },
   { date: "2025-08", label: "Aug 2025",
     html: "Started my MS in computer science at UNC Chapel Hill." },
-  { date: "2025-07", label: "Jul 2025",
-    html: "Attended ACL 2025 in Vienna." },
   { date: "2025-05", label: "May 2025",
     html: "Graduated with a B.Tech in computer science from IIT Delhi." },
   { date: "2024-05", label: "May 2024",
