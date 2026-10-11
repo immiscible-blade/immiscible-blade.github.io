@@ -42,6 +42,12 @@
   --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   --header-h: 58px;
+
+  /* wide-screen layout (≥1024px): label/photo gutter + reading column.
+     Below that the site is a single centered column. */
+  --aside-w:   200px;
+  --col-gap:   56px;
+  --content-w: 720px;
 }
 
 /* Dark theme — keep in sync with the media-query block below */
@@ -165,7 +171,14 @@ body::before{
   margin: 0 auto;
   padding: 0 max(24px, env(safe-area-inset-left)) 48px
              max(24px, env(safe-area-inset-right));
+  /* stretch to the viewport so the footer sits at the bottom on short pages */
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
+.page > main{ flex: 1 0 auto; min-width: 0; }
+.page > .site-footer{ flex-shrink: 0; }
 
 [id]{ scroll-margin-top: calc(var(--header-h) + 20px); }
 [hidden]{ display: none !important; }
@@ -898,6 +911,81 @@ section.first{
 @view-transition{ navigation: auto; }
 ::view-transition-old(root),
 ::view-transition-new(root){ animation-duration: .18s; }
+
+/* ── Wide screens (laptops, landscape) ───────────────────── */
+/* Above 1024px the single column gives way to a two-column grid:
+   a narrow gutter on the left (hero photo, section labels, years)
+   and a reading column on the right. The reading column keeps a
+   book-like measure, so lines never get long; the page as a whole
+   uses the width instead of floating in empty margins. */
+
+@media (min-width: 1024px){
+  .page{
+    max-width: calc(var(--aside-w) + var(--col-gap) + var(--content-w) + 48px);
+  }
+
+  /* main is the grid; every direct child lives in the reading column
+     unless it is a section or the hero, which span both columns and
+     repeat the same column template so their contents line up. */
+  #main{
+    display: grid;
+    grid-template-columns: var(--aside-w) minmax(0, var(--content-w));
+    column-gap: var(--col-gap);
+    align-content: start;
+  }
+  #main > *{ grid-column: 2; min-width: 0; }
+  #main > section,
+  #main > .hero{
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: var(--aside-w) minmax(0, var(--content-w));
+    column-gap: var(--col-gap);
+    align-items: start;
+  }
+  #main > section > *,
+  #main > .hero > *{ grid-column: 2; min-width: 0; }
+
+  /* section label sits in the gutter, level with the first line */
+  #main > section > .eyebrow{
+    grid-column: 1;
+    grid-row: 1;
+    margin: 0;
+    padding-top: 4px;
+  }
+
+  /* hero: portrait in the gutter, name and links beside it
+     (selectors carry #main so they outrank the column-2 default) */
+  #main > .hero > .headshot{ grid-column: 1; grid-row: 1; }
+  #main > .hero > .masthead{ grid-column: 2; grid-row: 1; }
+  .headshot img,
+  .photo-fallback{ width: 100%; max-width: var(--aside-w); }
+  .photo-rotor{ width: 100%; }
+  .photo-fallback{ font-size: 36px; }
+
+  /* publications: years in the gutter, papers beside them */
+  [data-pubs="full"]{ display: contents; }
+  [data-pubs="full"] > .pub-year{
+    grid-column: 1;
+    margin: 0;
+    padding-top: 4px;
+  }
+  [data-pubs="full"] > .pub{ grid-column: 2; }
+  [data-pubs="full"] > .pub:last-child{ margin-bottom: 30px; }
+  [data-pubs="full"] > .empty,
+  [data-pubs="full"] > noscript,
+  [data-pubs="full"] > p{ grid-column: 2; }
+
+  /* news dates get a little more room */
+  .news time{ width: 84px; }
+}
+
+@media (min-width: 1280px){
+  :root{
+    --aside-w:   220px;
+    --col-gap:   64px;
+    --content-w: 740px;
+  }
+}
 
 /* ── Motion, print ───────────────────────────────────────── */
 

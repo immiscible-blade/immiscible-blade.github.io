@@ -73,7 +73,8 @@ comments directly above it:
 Cross-page View Transitions (Chrome/Edge; graceful elsewhere) · command
 palette on `/` or `Ctrl/⌘K` (pages, papers, theme, copy-email) · dark mode
 following the OS with a ◐ override · sticky blur header · fluid `clamp()`
-type scale from phone to desktop · scroll-reveal animations · interactive
+type scale from phone to desktop · two-column layout on laptops (labels,
+photo and years in a left gutter, a book-width reading column beside them) · scroll-reveal animations · interactive
 hero strip (each segment links to its research thread) · hero photo rotator · ambient aurora backdrop · BibTeX toggle +
 copy with toast · JSON-LD Person markup · PWA manifest · sitemap/robots ·
 `prefers-reduced-motion` respected throughout · print stylesheet.
@@ -126,7 +127,10 @@ git push -u origin main
 ## Design notes
 
 Palette, segment colors, and the fluid type scale are CSS variables at the
-top of `styles.css` — the whole site reskins from there. The hero links
+top of `styles.css` — the whole site reskins from there. Layout widths live
+there too: below 1024px the site is one centered column; above it, `#main`
+becomes a grid of `--aside-w` (gutter) + `--content-w` (reading column),
+so a landscape laptop gets a wider page without longer lines. The hero links
 each research thread by name; thread colors live as dots on the research
 page (and in the favicon). To add a thread: a link in the hero's
 `.threads-line` and a thread block in `research.html`. `.nojekyll` matters —
