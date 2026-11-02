@@ -149,10 +149,12 @@
   function renderNow() {
     var el = $("[data-now]");
     if (!el) return;
-    if (typeof NOW !== "undefined" && NOW) {
-      el.innerHTML = '<span class="now-label">now</span> ' + NOW;
-      el.hidden = false;
-    }
+    if (typeof NOW === "undefined" || !NOW) return;
+    var lines = Array.isArray(NOW) ? NOW.filter(Boolean) : [NOW];
+    if (!lines.length) return;
+    var line = lines[Math.floor(Math.random() * lines.length)];
+    el.innerHTML = '<span class="now-label">now</span> ' + line;
+    el.hidden = false;
   }
 
   /* ── news ────────────────────────────────────────────────── */
@@ -366,12 +368,15 @@
       var addr = mail.getAttribute("href").replace(/^mailto:/, "");
       items.push({ label: "Copy email address", hint: "action", run: function () { copyText(addr, "email copied"); } });
     }
+    // easter egg: only surfaces when the whole secret word is typed
+    items.push({ label: "where am I?", hint: "???", secret: "travolta", href: ROOT + "404.html" });
     return items;
   }
 
   function paletteRender(q) {
     q = (q || "").toLowerCase();
     pal.filtered = pal.items.filter(function (i) {
+      if (i.secret) return q === i.secret;
       return i.label.toLowerCase().indexOf(q) !== -1 ||
              (i.hint && i.hint.toLowerCase().indexOf(q) !== -1);
     });

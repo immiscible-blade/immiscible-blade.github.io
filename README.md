@@ -12,7 +12,7 @@ no framework, no dependencies. Push to GitHub, and GitHub Pages serves it as-is.
 ├── publications.html       full list (rendered from data.js)
 ├── teaching.html           teaching, mentoring, talks, service
 ├── notes.html              occasional writing (rendered from data.js)
-├── misc.html               bass, games, food
+├── misc.html               off the clock — bass, games, food, styled as a bar
 ├── 404.html                served automatically by GitHub Pages
 ├── notes/
 │   └── _template.html      copy this to write a new note
@@ -65,8 +65,11 @@ comments directly above it:
 - **Photos** → drop files in `assets/img/` and list them in `PHOTOS`.
   One entry = static headshot; two or more = a shuffled rotator that
   auto-advances and steps photo-by-photo on click.
-- **Now line** → edit `NOW` (one mono line under the hero links; keep it
-  fresh, it signals the site is alive). `LAST_UPDATED` feeds the footer.
+- **Now line** → add lines to `NOW` (one mono line under the hero links;
+  with two or more entries a random one shows each visit; keep it fresh,
+  it signals the site is alive). `LAST_UPDATED` feeds the footer.
+- **Inspirations** → quotes and lessons live as static markup in
+  `index.html` (`#inspirations`); copy a `.quote` figure or a `.takeaway`.
 
 ## Features
 
@@ -77,7 +80,10 @@ type scale from phone to desktop · two-column layout on laptops (labels,
 photo and years in a left gutter, a book-width reading column beside them) · scroll-reveal animations · interactive
 hero strip (each segment links to its research thread) · hero photo rotator · ambient aurora backdrop · BibTeX toggle +
 copy with toast · JSON-LD Person markup · PWA manifest · sitemap/robots ·
-`prefers-reduced-motion` respected throughout · print stylesheet.
+`prefers-reduced-motion` respected throughout · print stylesheet · the
+misc page is always a dim, warm bar whatever the theme toggle says ·
+one easter egg in the palette (type the surname of the man on the 404
+page).
 
 ## Tested
 
