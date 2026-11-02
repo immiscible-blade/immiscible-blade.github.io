@@ -81,7 +81,8 @@ photo and years in a left gutter, a book-width reading column beside them) · sc
 hero strip (each segment links to its research thread) · hero photo rotator · ambient aurora backdrop · BibTeX toggle +
 copy with toast · JSON-LD Person markup · PWA manifest · sitemap/robots ·
 `prefers-reduced-motion` respected throughout · print stylesheet · the
-misc page is always a dim, warm bar whatever the theme toggle says ·
+misc page is always a dim, warm bar whatever the theme toggle says, and
+its nav link ("brewery") glows amber ·
 one easter egg in the palette (type the surname of the man on the 404
 page).
 
