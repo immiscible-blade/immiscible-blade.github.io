@@ -40,6 +40,9 @@
 
   --serif: "Newsreader", "Iowan Old Style", "Charter", Georgia, serif;
   --mono:  "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --cjk:   "Noto Serif SC", "Noto Serif CJK SC", "Source Han Serif SC",
+           "Songti SC", "STSong", "PingFang SC", "Microsoft YaHei", "SimSun",
+           var(--serif);
 
   --header-h: 58px;
 
@@ -740,6 +743,92 @@ section.first{
   color: var(--muted);
   margin: 0 0 28px;
 }
+
+/* ── Inspirations (quotes, lessons) ──────────────────────── */
+
+.quote{ margin: 0; }
+.quote blockquote{
+  margin: 0;
+  padding: 2px 0 2px 18px;
+  border-left: 3px solid var(--ochre);
+}
+.quote p{ margin: 0; }
+.quote-en{
+  font-style: italic;
+  font-size: var(--fs-1);
+  text-wrap: pretty;
+}
+.quote-counter{
+  font-size: var(--fs-0);
+  color: var(--muted);
+  margin-top: 8px !important;
+}
+.quote figcaption{
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 12px;
+  padding-left: 21px;
+}
+.quote figcaption [lang="zh"]{ font-family: var(--cjk); }
+.quote-note{
+  font-size: var(--fs-0);
+  margin: 14px 0 0;
+  padding-left: 21px;
+}
+.takeaway{
+  margin: 26px 0 0;
+  padding-top: 18px;
+  border-top: 1px dashed var(--hairline);
+  font-size: var(--fs-0);
+}
+.insp-label{
+  display: inline-block;
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ochre);
+  border-radius: 3px;
+  padding: 1px 6px;
+  margin-right: 6px;
+  vertical-align: 2px;
+}
+
+/* ── The bar (misc page) ─────────────────────────────────── */
+/* misc.html is off the clock: a dim, warm room whatever the theme
+   toggle says. Token overrides only; the layout is the same page.
+   :has() keeps the specificity above both dark-mode blocks. */
+
+:root:has(body[data-page="misc"]){
+  --paper:    #1A1411;
+  --ink:      #F1E6D2;
+  --muted:    #B59F82;
+  --hairline: #3A2E26;
+  --carolina: #E0A64B;
+  --navy:     #F3C877;
+  --tint:     #241C17;
+  --ochre:    #D9893B;
+  --header-bg: rgba(26,20,17,.84);
+  --seg1: #8C4A2F;
+  --seg2: #D9893B;
+  --seg3: #F3C877;
+  --seg4: #B59F82;
+  --sel-bg: #5A3E1E;
+  --sel-fg: #F1E6D2;
+  --aur1: rgba(224, 166, 75, 0.20);   /* lamp over the bar */
+  --aur2: rgba(176, 58, 46, 0.16);    /* neon in the window */
+  --aur3: rgba(243, 200, 119, 0.10);
+  --aur4: rgba(90, 40, 20, 0.22);
+}
+body[data-page="misc"]::before{ opacity: .09; }     /* wood grain */
+body[data-page="misc"] .page-title{
+  text-shadow: 0 0 14px rgba(243, 200, 119, .35), 0 0 36px rgba(224, 166, 75, .22);
+}
+body[data-page="misc"] .eyebrow{ color: var(--ochre); }
+body[data-page="misc"] .page-intro{ color: var(--muted); }
 
 /* ── Footer ──────────────────────────────────────────────── */
 

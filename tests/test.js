@@ -65,8 +65,26 @@ console.log("\nindex.html");
   input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
   const opts = d.querySelectorAll(".palette li[role=option]");
   ok(opts.length === 1 && /LRPlan/i.test(opts[0].textContent), "palette filters to the paper");
+  input.value = "trav";
+  input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+  ok(!!d.querySelector(".palette li.palette-none"), "easter egg stays hidden on a partial word");
+  input.value = "travolta";
+  input.dispatchEvent(new dom.window.Event("input", { bubbles: true }));
+  const egg = d.querySelectorAll(".palette li[role=option]");
+  ok(egg.length === 1 && /where am I/.test(egg[0].textContent), "easter egg surfaces on the full word");
   d.dispatchEvent(new dom.window.KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
   ok(!d.querySelector(".palette.open"), "palette closes on Escape");
+}
+
+/* now line picks from a list */
+{
+  const dom = loadPage("index.html", { mutate: "NOW.length = 0; NOW.push('only line');" });
+  const now = dom.window.document.querySelector("[data-now]");
+  ok(now.hidden === false && /only line/.test(now.textContent), "now line renders from a one-entry list");
+}
+{
+  const dom = loadPage("index.html", { mutate: "NOW.length = 0;" });
+  ok(dom.window.document.querySelector("[data-now]").hidden === true, "empty NOW list hides the line");
 }
 
 /* news expander (content-tolerant: pushes enough to exceed the limit) */

@@ -41,9 +41,16 @@ const BACKDROP = { enabled: true, density: 1.0 };
 
 /* ── NOW ──────────────────────────────────────────────────────
    One mono line under the hero links. Simple HTML allowed.
-   Set to "" to hide. Update it occasionally — it signals the
-   site is alive. TODO: keep current.                          */
-const NOW = "research &nbsp;·&nbsp; competitive Counter-Strike &nbsp;·&nbsp; learning bass";
+   One entry → always shown. Two or more → a random one each
+   visit. Set to [] to hide. Update it occasionally — it signals
+   the site is alive. TODO: add more lines.
+
+   TEMPLATE:
+   "arguing with a bass line",
+─────────────────────────────────────────────────────────────── */
+const NOW = [
+  "research &nbsp;·&nbsp; competitive Counter-Strike &nbsp;·&nbsp; learning bass",
+];
 
 /* ── PHOTOS ───────────────────────────────────────────────────
    Hero photo(s). One entry → static headshot (current behavior).
