@@ -278,6 +278,26 @@ kbd{
   border-bottom-color: var(--carolina);
 }
 
+/* "brewery" nav link: a small neon sign, amber with a soft halo */
+.site-nav .nav-bar{
+  color: var(--ochre);
+  text-shadow: 0 0 8px rgba(184, 146, 62, .45);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--ochre) 50%, transparent);
+  animation: neon-hum 5s ease-in-out infinite alternate;
+}
+.site-nav .nav-bar:hover,
+.site-nav .nav-bar[aria-current="page"]{
+  color: var(--ochre);
+  border-bottom-color: var(--ochre);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--ochre) 75%, transparent),
+               0 0 22px color-mix(in srgb, var(--ochre) 35%, transparent);
+  animation: none;
+}
+@keyframes neon-hum{
+  from{ text-shadow: 0 0 6px  color-mix(in srgb, var(--ochre) 40%, transparent); }
+  to  { text-shadow: 0 0 12px color-mix(in srgb, var(--ochre) 70%, transparent); }
+}
+
 .theme-toggle{
   flex-shrink: 0;
   background: none;
